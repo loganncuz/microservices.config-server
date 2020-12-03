@@ -49,7 +49,7 @@ spring:
           timeout: 10
           clone-on-start: true
   profiles:
-    active: native
+    active: git
   security:
     user:
       name: root
