@@ -1,0 +1,61 @@
+encrypt:
+  key-store:
+    location: classpath:/config-server.jks
+    password: my-s70r3-s3cr3t
+    alias: config-server-key
+    secret: my-k34-s3cr3t
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+#    statusPageUrlPath: /diagnostics/admin/info
+#    healthCheckUrlPath: /diagnostics/admin/health
+    metadataMap:
+      user:
+        name: root
+        password: s3cr3t
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://test:password@localhost:9999/eureka/
+    healthcheck:
+      enabled: true
+    lease:
+      duration: 5
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  port: 8888
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/shared
+        git:
+          uri: https://github.com/loganncuz/microservices.git
+          timeout: 10
+          clone-on-start: true
+  profiles:
+    active: git
+  security:
+    user:
+      name: root
+      password: s3cr3t
+
+logging:
+  level:
+    org.exampledriven.eureka.customer.shared.CustomerServiceFeignClient: DEBUG
+    org.exampledriven.eureka: DEBUG

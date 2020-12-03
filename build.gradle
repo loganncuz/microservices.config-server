@@ -1,0 +1,155 @@
+buildscript {
+    ext {
+        springBootVersion = '2.2.2.RELEASE'
+        profile = "PROD"
+    }
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+//        maven {
+//            url "https://plugins.gradle.org/m2/"
+//        }
+//        maven { url "https://jitpack.io" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+//        classpath "gradle.plugin.com.github.alexeylisyutenko:windows-service-plugin:1.1.0"
+//        classpath("org.ajoberstar:gradle-git:0.6.1")
+//        classpath "gradle.plugin.com.github.unafraid.gradle:gradle-git-repo-plugin:2.0.4"
+    }
+}
+plugins {
+//    id "com.github.alexeylisyutenko.windows-service-plugin" version "1.1.0"
+//    id "com.github.unafraid.gradle.git-repo-plugin" version "2.0.4"
+}
+//apply plugin: "com.github.unafraid.gradle.git-repo-plugin"
+apply plugin: 'org.springframework.boot'
+apply plugin: 'java-library'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+mainClassName = 'com.ncuz.config.server.Application'
+
+apply plugin: 'io.spring.dependency-management'
+
+configurations {
+    // configuration that holds jars to include in the jar
+    deplib
+}
+
+group 'com.ncuz'
+//version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+jar {
+    archivesBaseName = 'config-server'
+    manifest {
+        attributes(
+                'Main-Class': 'org.springframework.boot.loader.JarLauncher',
+                'Class-Path': archivesBaseName+'.jar'
+        )
+    }
+}
+
+repositories {
+    jcenter()
+    maven {
+        /*url ("http://nexus.saas.hand-china.com/content/repositories/rdc/",
+                "https://projet.toutatice.fr/nexus/content/repositories/toutatice-releases/")*/
+        url ("http://www.datanucleus.org/downloads/maven2/")
+    }
+    maven {
+        /*url ("http://nexus.saas.hand-china.com/content/repositories/rdc/",
+                "https://projet.toutatice.fr/nexus/content/repositories/toutatice-releases/")*/
+        url ("https://projet.toutatice.fr/nexus/content/repositories/toutatice-releases/")
+    }
+//    maven { url "https://plugins.gradle.org/m2/" }
+//    maven { url "https://jitpack.io" }
+//    github("loganncuz", "microservices.config-server", "origin", "master", "releases")
+//    git("https://github.com/loganncuz/microservices.config-server.git", "microservices.config-server", "origin", "master", "releases")
+}
+ext {
+    set('springCloudVersion', "Hoxton.SR3")
+//     set('springCloudVersion', "Greenwich.SR4")
+//    set('springBootVersion',  '2.1.9.RELEASE')
+    set('springBootVersion',  '2.2.2.RELEASE')
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        showStandardStreams = true
+        events "passed", "skipped", "failed"
+    }
+}
+
+dependencyManagement {
+
+    imports { mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"}
+    imports { mavenBom "org.springframework.boot:spring-boot-starter-parent:${springBootVersion}"}
+
+}
+
+dependencies {
+    compile "org.springframework.cloud:spring-cloud-config-server"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-security"
+    compile "org.springframework.boot:spring-boot-starter-test"
+    compile "org.springframework.boot:spring-boot-devtools"
+    compile "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+
+    // logger build up
+    compile 'log4j:log4j:1.2.17'
+    //  compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
+    //compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
+    // https://mvnrepository.com/artifact/com.jcabi/jcabi-log
+    compile group: 'com.jcabi', name: 'jcabi-log', version: '0.18'
+    compile group: 'org.fusesource.jansi', name: 'jansi', version: '1.18'
+    // https://mvnrepository.com/artifact/commons-configuration/commons-configuration
+    compile group: 'commons-configuration', name: 'commons-configuration', version: '1.10'
+
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+
+//    compile "com.github.loganncuz:microservices.config-server:main"
+
+
+    // testing build up
+    testImplementation('org.junit.jupiter:junit-jupiter:5.4.2')
+    testImplementation 'junit:junit:4.12'
+
+    // Lombok build up
+//    compileOnly 'org.projectlombok:lombok:1.18.4'
+//    annotationProcessor 'org.projectlombok:lombok:1.18.4'
+    deplib  files('src/main/resources/log4j-helper.jar')
+    deplib  files('src/main/resources/xml-reader.jar')
+    deplib  files('src/main/resources/consolidation.jar')
+    configurations.compile.extendsFrom(configurations.deplib)
+
+
+}
+//
+//import org.ajoberstar.gradle.git.tasks.GitTag
+//import org.ajoberstar.gradle.git.tasks.GitPush
+//version ="0.0.1"
+//ext.yourTag = "REL-${project.version.toString()}"
+//
+//task createTag(type: GitTag) {
+//    if(profile=="PROD"){
+//        repoPath = rootDir
+//        tagName = yourTag
+//        println "A message which is logged at QUIET createTag : "+rootDir
+//    }
+//
+//}
+//
+//task pushTag(type: GitPush, dependsOn: createTag) {
+//    if(profile=="PROD"){
+//        namesOrSpecs = [yourTag]
+//        println "A message which is logged at QUIET pushTag : "+namesOrSpecs
+//    }
+//}
+//
