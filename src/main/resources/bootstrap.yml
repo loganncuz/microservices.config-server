@@ -8,7 +8,7 @@ encrypt:
 eureka:
   instance:
     hostname: java-config-server.herokuapp.com
-    nonSecurePort: 80
+#    nonSecurePort: 80
     leaseRenewalIntervalInSeconds: 1
     leaseExpirationDurationInSeconds: 2
 #    statusPageUrlPath: /diagnostics/admin/info
