@@ -7,7 +7,7 @@ encrypt:
 
 eureka:
   instance:
-    hostname: ${DOMAIN_NAME}
+    hostname: java-config-server.herokuapp.com
 #     nonSecurePort: 80
     leaseRenewalIntervalInSeconds: 1
     leaseExpirationDurationInSeconds: 2
